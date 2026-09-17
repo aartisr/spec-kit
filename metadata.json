@@ -1,0 +1,6 @@
+{
+  "name": "Spec-Kit Studio",
+  "description": "Specification-driven development studio and visual workspace layer for GitHub Spec-Kit.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

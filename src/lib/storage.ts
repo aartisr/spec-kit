@@ -1,0 +1,209 @@
+import { SpecKitProject } from '../types/speckit';
+import { SAMPLE_PROJECTS } from './sampleData';
+
+const STORAGE_KEY = 'speckit_studio_projects_v1';
+const ACTIVE_PROJECT_KEY = 'speckit_studio_active_project_id';
+
+class StorageService {
+  private listeners: Set<() => void> = new Set();
+
+  public subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  private notify() {
+    this.listeners.forEach((listener) => listener());
+  }
+
+  public getProjects(): SpecKitProject[] {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        this.saveProjects(SAMPLE_PROJECTS);
+        return SAMPLE_PROJECTS;
+      }
+      const parsed: SpecKitProject[] = JSON.parse(raw);
+      // Clean up any legacy unquoted mermaid diagrams in cache
+      let modified = false;
+      parsed.forEach((p) => {
+        if (p.plan?.mermaidDiagram && p.plan.mermaidDiagram.includes('|@google/genai SDK|')) {
+          p.plan.mermaidDiagram = p.plan.mermaidDiagram.replace('|@google/genai SDK|', '|"@google/genai SDK"|');
+          modified = true;
+        }
+      });
+      if (modified) {
+        this.saveProjects(parsed);
+      }
+      return parsed;
+    } catch (err) {
+      console.error('Failed to parse projects from storage, resetting to sample projects', err);
+      return SAMPLE_PROJECTS;
+    }
+  }
+
+  public saveProjects(projects: SpecKitProject[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+      this.notify();
+    } catch (err) {
+      console.error('Failed to save projects to storage', err);
+    }
+  }
+
+  public getActiveProjectId(): string {
+    const projects = this.getProjects();
+    const storedId = localStorage.getItem(ACTIVE_PROJECT_KEY);
+    if (storedId && projects.some((p) => p.id === storedId)) {
+      return storedId;
+    }
+    return projects[0]?.id || 'proj-spec-kit-studio';
+  }
+
+  public setActiveProjectId(id: string): void {
+    localStorage.setItem(ACTIVE_PROJECT_KEY, id);
+    this.notify();
+  }
+
+  public getActiveProject(): SpecKitProject {
+    const projects = this.getProjects();
+    const activeId = this.getActiveProjectId();
+    const active = projects.find((p) => p.id === activeId);
+    if (active) return active;
+    return projects[0] || SAMPLE_PROJECTS[0];
+  }
+
+  public updateActiveProject(updatedProject: SpecKitProject): void {
+    const projects = this.getProjects();
+    const index = projects.findIndex((p) => p.id === updatedProject.id);
+    const now = new Date().toISOString();
+    const projectToSave = {
+      ...updatedProject,
+      updatedAt: now,
+    };
+
+    if (index >= 0) {
+      projects[index] = projectToSave;
+    } else {
+      projects.unshift(projectToSave);
+    }
+
+    this.saveProjects(projects);
+  }
+
+  public createNewProject(name: string, description: string): SpecKitProject {
+    const id = `proj-${Date.now()}`;
+    const now = new Date().toISOString();
+    const newProj: SpecKitProject = {
+      id,
+      name,
+      description,
+      createdAt: now,
+      updatedAt: now,
+      version: '1.0.0',
+      spec: {
+        id: `spec-${Date.now()}`,
+        title: name,
+        summary: description || 'New Specification for feature development.',
+        userStories: [],
+        functionalRequirements: [],
+        nonFunctionalRequirements: [],
+        userFlows: [],
+        edgeCases: [],
+        successMetrics: [],
+        markdown: `# ${name}\n\n${description}`,
+        lastUpdated: now,
+      },
+      plan: {
+        id: `plan-${Date.now()}`,
+        techStack: [
+          { category: 'Frontend', technology: 'React + TypeScript', justification: 'Type-safe interactive UI' },
+          { category: 'Backend', technology: 'Node.js Express', justification: 'RESTful API Services' },
+        ],
+        architectureSummary: 'Modular client-server architecture.',
+        components: [],
+        apiContracts: [],
+        dataSchemas: [],
+        adrs: [],
+        mermaidDiagram: 'graph TD\n    A[Client UI] --> B[API Server]',
+        markdown: `# Implementation Plan for ${name}`,
+        lastUpdated: now,
+      },
+      tasks: {
+        id: `task-${Date.now()}`,
+        tasks: [
+          {
+            id: 'TASK-001',
+            title: 'Project Setup & Dependency Installation',
+            phase: 'Phase 1: Setup',
+            description: 'Initialize directory layout and install base dependencies.',
+            status: 'todo',
+            estimatedHours: 2,
+            dependencies: [],
+          },
+        ],
+        markdown: `# Task List\n- [ ] TASK-001 Project Setup`,
+        lastUpdated: now,
+      },
+      constitution: {
+        id: `const-${Date.now()}`,
+        title: `${name} Constitution`,
+        rules: [
+          {
+            id: 'RULE-1',
+            title: 'Code Quality & Typing',
+            category: 'Coding Standard',
+            description: 'Strict TypeScript typing without explicit any.',
+            ruleStatement: 'All variables and parameters must be explicitly typed.',
+            strictness: 'Mandatory',
+          },
+        ],
+        markdown: `# Constitution for ${name}`,
+        lastUpdated: now,
+      },
+    };
+
+    const projects = this.getProjects();
+    projects.unshift(newProj);
+    this.saveProjects(projects);
+    this.setActiveProjectId(newProj.id);
+    return newProj;
+  }
+
+  public deleteProject(id: string): void {
+    let projects = this.getProjects();
+    if (projects.length <= 1) {
+      alert('Cannot delete the last remaining project.');
+      return;
+    }
+    projects = projects.filter((p) => p.id !== id);
+    this.saveProjects(projects);
+    this.setActiveProjectId(projects[0].id);
+  }
+
+  public exportProjectsJson(): string {
+    return JSON.stringify(this.getProjects(), null, 2);
+  }
+
+  public importProjectsJson(jsonString: string): boolean {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].id) {
+        this.saveProjects(parsed);
+        this.setActiveProjectId(parsed[0].id);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Invalid JSON import', err);
+      return false;
+    }
+  }
+
+  public resetToSampleProjects(): void {
+    this.saveProjects(SAMPLE_PROJECTS);
+    this.setActiveProjectId(SAMPLE_PROJECTS[0].id);
+  }
+}
+
+export const storageService = new StorageService();

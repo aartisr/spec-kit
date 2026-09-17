@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@layer base {
+  :root[data-theme="obsidian"], :root:not([data-theme]) {
+    --bg-canvas: #09090b;
+    --bg-surface: #18181b;
+    --bg-surface-hover: #27272a;
+    --bg-card: #18181b;
+    --bg-input: #09090b;
+    --border-subtle: #27272a;
+    --border-strong: #3f3f46;
+    --text-main: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --text-faint: #71717a;
+    --accent-primary: #22d3ee;
+    --accent-indigo: #818cf8;
+    --accent-purple: #c084fc;
+    --accent-emerald: #34d399;
+
+    color-scheme: dark;
+  }
+
+  :root[data-theme="nordic-light"] {
+    /* Cool Porcelain / Sky Blue Studio */
+    --bg-canvas: #f1f5f9;
+    --bg-surface: #ffffff;
+    --bg-surface-hover: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-input: #f1f5f9;
+    --border-subtle: #cbd5e1;
+    --border-strong: #94a3b8;
+    --text-main: #0f172a;
+    --text-muted: #334155;
+    --text-faint: #64748b;
+    --accent-primary: #0284c7;
+    --accent-indigo: #4338ca;
+    --accent-purple: #6d28d9;
+    --accent-emerald: #059669;
+
+    /* Override Tailwind Zinc Palette for Nordic Light */
+    --color-zinc-950: #f1f5f9;
+    --color-zinc-900: #ffffff;
+    --color-zinc-800: #e2e8f0;
+    --color-zinc-700: #cbd5e1;
+    --color-zinc-600: #94a3b8;
+    --color-zinc-500: #64748b;
+    --color-zinc-400: #475569;
+    --color-zinc-300: #334155;
+    --color-zinc-200: #1e293b;
+    --color-zinc-100: #0f172a;
+
+    color-scheme: light;
+  }
+
+  :root[data-theme="warm-paper"] {
+    /* Warm Editorial Cream & Amber Stone Studio */
+    --bg-canvas: #f4efe6;
+    --bg-surface: #fffdfa;
+    --bg-surface-hover: #f0e9dd;
+    --bg-card: #fffdfa;
+    --bg-input: #eee7d9;
+    --border-subtle: #d6cebe;
+    --border-strong: #b8ac96;
+    --text-main: #1c1917;
+    --text-muted: #44403c;
+    --text-faint: #78716c;
+    --accent-primary: #c2410c;
+    --accent-indigo: #3730a3;
+    --accent-purple: #7e22ce;
+    --accent-emerald: #047857;
+
+    /* Override Tailwind Zinc Palette for Warm Paper */
+    --color-zinc-950: #eee7d9;
+    --color-zinc-900: #fffdfa;
+    --color-zinc-800: #d6cebe;
+    --color-zinc-700: #c2b6a2;
+    --color-zinc-600: #948670;
+    --color-zinc-500: #78716c;
+    --color-zinc-400: #57534e;
+    --color-zinc-300: #44403c;
+    --color-zinc-200: #292524;
+    --color-zinc-100: #1c1917;
+
+    color-scheme: light;
+  }
+
+  html, body {
+    background-color: var(--bg-canvas);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+}
+
+/* Specific theme overrides to ensure maximum contrast and distinct visual identities */
+[data-theme="nordic-light"] {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="warm-paper"] {
+  background-color: #f4efe6 !important;
+  color: #1c1917 !important;
+}
+
+/* Force high-contrast text and border rendering in light themes */
+[data-theme="nordic-light"] .border-zinc-800,
+[data-theme="nordic-light"] .border-zinc-800\/80,
+[data-theme="nordic-light"] .border-zinc-700 {
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="warm-paper"] .border-zinc-800,
+[data-theme="warm-paper"] .border-zinc-800\/80,
+[data-theme="warm-paper"] .border-zinc-700 {
+  border-color: #d6cebe !important;
+}
+
+[data-theme="nordic-light"] .bg-zinc-900,
+[data-theme="nordic-light"] .bg-zinc-900\/60,
+[data-theme="nordic-light"] .bg-zinc-900\/80 {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+[data-theme="warm-paper"] .bg-zinc-900,
+[data-theme="warm-paper"] .bg-zinc-900\/60,
+[data-theme="warm-paper"] .bg-zinc-900\/80 {
+  background-color: #fffdfa !important;
+  color: #1c1917 !important;
+}
+
+[data-theme="nordic-light"] .bg-zinc-950 {
+  background-color: #f1f5f9 !important;
+}
+
+[data-theme="warm-paper"] .bg-zinc-950 {
+  background-color: #eee7d9 !important;
+}
+
+[data-theme="nordic-light"] .text-zinc-100 {
+  color: #0f172a !important;
+}
+
+[data-theme="warm-paper"] .text-zinc-100 {
+  color: #1c1917 !important;
+}
+
+[data-theme="nordic-light"] .text-zinc-300,
+[data-theme="nordic-light"] .text-zinc-400 {
+  color: #334155 !important;
+}
+
+[data-theme="warm-paper"] .text-zinc-300,
+[data-theme="warm-paper"] .text-zinc-400 {
+  color: #44403c !important;
+}
+
+/* Theme Utility Classes */
+.theme-canvas {
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+}
+
+.theme-card {
+  background-color: var(--bg-surface);
+  border-color: var(--border-subtle);
+  color: var(--text-main);
+}
+
+.theme-border {
+  border-color: var(--border-subtle);
+}
+
+.theme-text-main {
+  color: var(--text-main);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
+}
