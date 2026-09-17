@@ -1,6 +1,12 @@
 # 🚀 Spec-Kit Studio
-> **The Universal Visual Layer for Spec-Driven Development (SDD)**  
-> *Transform ambiguous ideas into deterministic software architecture. Seamlessly bridge high-level product intent, structural plans, AI agent execution, and existing legacy codebases across any technology stack.*
+> **Powered natively by `spec-kit` (GitHub Spec-Kit)**  
+> *The Official Visual & Interactive Studio for GitHub `spec-kit` and Spec-Driven Development (SDD)*  
+> *Transform ambiguous ideas into deterministic software architecture. Seamlessly bridge high-level product intent, structural plans, AI agent execution, and existing legacy codebases across any technology stack using the official `spec-kit` standard.*
+
+---
+
+> 🌟 **CORE HIGHLIGHT: Built on `spec-kit`**  
+> **Spec-Kit Studio** is natively powered by **`spec-kit`** — the official GitHub framework for Spec-Driven Development. Every specification, architecture plan, task board, and constitution rule managed in this studio conforms 100% to the standard `.spec-kit` repository structure (`spec.md`, `plan.md`, `tasks.md`, `rules.md`, and `specify.sh`), providing seamless interoperability with the `spec-kit` CLI, GitHub workflows, and AI coding assistants (Cursor, Claude Code, Windsurf, Copilot, Gemini).
 
 ---
 
