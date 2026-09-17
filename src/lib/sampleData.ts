@@ -7,7 +7,7 @@ export const SAMPLE_PROJECTS: SpecKitProject[] = [
     description: 'Visual Spec-Driven Development Studio Layer for GitHub Spec-Kit framework',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    version: '1.0.0',
+    version: '1.0.7',
     spec: {
       id: 'spec-1',
       title: 'Spec-Kit Studio Visual Dashboard',

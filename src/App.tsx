@@ -141,6 +141,12 @@ function AppContent() {
     setActiveTab('overview');
   };
 
+  const handleSelectVersion = (version: string) => {
+    if (!activeProject) return;
+    const updated = { ...activeProject, version, updatedAt: new Date().toISOString() };
+    storageService.updateActiveProject(updated);
+  };
+
   // Count unmapped tasks
   const unmappedTasks = activeProject.tasks.tasks.filter((t) => !t.mappedRequirementId).length;
 
@@ -157,6 +163,7 @@ function AppContent() {
         isDarkMode={isDark}
         onToggleTheme={() => {}}
         onResetSampleData={handleResetSampleData}
+        onSelectVersion={handleSelectVersion}
       />
 
       {/* Studio Workspace Layout */}
@@ -184,6 +191,7 @@ function AppContent() {
                   project={activeProject}
                   onNavigateTab={setActiveTab}
                   onTriggerAiSpecModal={() => setIsAiSpecModalOpen(true)}
+                  onSelectVersion={handleSelectVersion}
                 />
               )}
 

@@ -15,17 +15,20 @@ import {
   Zap
 } from 'lucide-react';
 import { SpecKitProject, ViewTab } from '../../types/speckit';
+import { SpecKitVersionSelector } from '../common/SpecKitVersionSelector';
 
 interface OverviewDashboardProps {
   project: SpecKitProject;
   onNavigateTab: (tab: ViewTab) => void;
   onTriggerAiSpecModal: () => void;
+  onSelectVersion: (version: string) => void;
 }
 
 export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
   project,
   onNavigateTab,
   onTriggerAiSpecModal,
+  onSelectVersion,
 }) => {
   const { spec, plan, tasks, constitution, audit } = project;
 
@@ -44,7 +47,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                 GitHub Spec-Kit Workspace
               </span>
@@ -53,7 +56,9 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
                   Imported: {project.importedRepo.primaryLanguage}
                 </span>
               )}
-              <span className="text-xs text-zinc-400">Version {project.version}</span>
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-mono">
+                Spec-Kit v{project.version || '1.0.7'}
+              </span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-100 tracking-tight">
               {project.name}
@@ -80,6 +85,13 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Spec-Kit Version Control & Capability Matrix */}
+      <SpecKitVersionSelector
+        currentVersion={project.version || '1.0.7'}
+        onSelectVersion={onSelectVersion}
+        variant="full"
+      />
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

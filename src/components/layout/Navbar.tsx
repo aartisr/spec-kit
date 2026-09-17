@@ -17,6 +17,7 @@ import {
 import { SpecKitProject } from '../../types/speckit';
 import { generateSpecKitZip, downloadBlob } from '../../lib/export';
 import { ThemeSwitcher } from '../common/ThemeSwitcher';
+import { SpecKitVersionSelector } from '../common/SpecKitVersionSelector';
 
 interface NavbarProps {
   projects: SpecKitProject[];
@@ -28,6 +29,7 @@ interface NavbarProps {
   isDarkMode: boolean;
   onToggleTheme: () => void;
   onResetSampleData: () => void;
+  onSelectVersion: (version: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,6 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   isDarkMode,
   onToggleTheme,
   onResetSampleData,
+  onSelectVersion,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -58,27 +61,31 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="h-16 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between gap-4 select-none">
+    <header className="h-16 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-30 px-3 sm:px-4 md:px-6 flex items-center justify-between gap-2 sm:gap-4 select-none">
       {/* Left: Brand & Project Selector */}
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-cyan-500 to-emerald-500 p-0.5 shadow-md shadow-indigo-500/10 flex items-center justify-center">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-cyan-500 to-emerald-500 p-0.5 shadow-md shadow-indigo-500/10 flex items-center justify-center shrink-0">
             <div className="w-full h-full bg-zinc-950 rounded-[10px] flex items-center justify-center">
-              <FolderKanban className="w-5 h-5 text-cyan-400" />
+              <FolderKanban className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
             </div>
           </div>
           <div className="hidden sm:block">
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-sm tracking-tight text-zinc-100">Spec-Kit Studio</span>
-              <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                v1.0
-              </span>
             </div>
-            <p className="text-[11px] text-zinc-400 truncate max-w-[180px]">GitHub Spec-Kit Layer</p>
+            <p className="text-[10px] text-zinc-400 truncate max-w-[150px]">GitHub Spec-Kit Layer</p>
           </div>
         </div>
 
-        <div className="h-5 w-px bg-zinc-800 mx-1 hidden sm:block" />
+        {/* Spec-Kit Version Selector Component */}
+        <SpecKitVersionSelector
+          currentVersion={activeProject.version || '1.0.7'}
+          onSelectVersion={onSelectVersion}
+          variant="compact"
+        />
+
+        <div className="h-5 w-px bg-zinc-800 mx-0.5 hidden md:block" />
 
         {/* Project Dropdown */}
         <div className="relative">

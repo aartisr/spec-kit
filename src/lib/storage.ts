@@ -100,7 +100,7 @@ class StorageService {
       description,
       createdAt: now,
       updatedAt: now,
-      version: '1.0.0',
+      version: '1.0.7',
       spec: {
         id: `spec-${Date.now()}`,
         title: name,
