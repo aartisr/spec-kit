@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
@@ -637,6 +638,83 @@ Generate a complete GitHub Spec-Kit specification package tailored specifically 
   } catch (err: any) {
     console.error("Error generating feature for imported repo:", err);
     res.status(500).json({ success: false, error: err.message || "Failed to generate feature spec for imported repo." });
+  }
+});
+
+// Spec-Kit v1.0.7 Native Core Engine API Endpoints
+const SPEC_KIT_VENDOR_PATH = path.join(process.cwd(), "vendor", "spec-kit");
+
+app.get("/api/speckit/v107/info", (req, res) => {
+  try {
+    const isInstalled = fs.existsSync(SPEC_KIT_VENDOR_PATH);
+    let presetCatalog: any = null;
+    let extensionCatalog: any = null;
+
+    if (isInstalled) {
+      const presetPath = path.join(SPEC_KIT_VENDOR_PATH, "presets", "catalog.json");
+      const extPath = path.join(SPEC_KIT_VENDOR_PATH, "extensions", "catalog.json");
+      if (fs.existsSync(presetPath)) {
+        presetCatalog = JSON.parse(fs.readFileSync(presetPath, "utf-8"));
+      }
+      if (fs.existsSync(extPath)) {
+        extensionCatalog = JSON.parse(fs.readFileSync(extPath, "utf-8"));
+      }
+    }
+
+    res.json({
+      success: true,
+      specKitVersion: "1.0.7",
+      releaseTag: "v1.0.7",
+      installed: isInstalled,
+      vendorPath: SPEC_KIT_VENDOR_PATH,
+      presetsCount: presetCatalog?.presets ? Object.keys(presetCatalog.presets).length : 0,
+      extensionsCount: extensionCatalog?.extensions ? Object.keys(extensionCatalog.extensions).length : 0,
+      workflowStages: ["constitution", "specify", "plan", "tasks", "implement"],
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/speckit/v107/templates", (req, res) => {
+  try {
+    const templatesDir = path.join(SPEC_KIT_VENDOR_PATH, "templates");
+    if (!fs.existsSync(templatesDir)) {
+      return res.status(404).json({ success: false, error: "Spec-Kit v1.0.7 templates directory not found." });
+    }
+
+    const files = fs.readdirSync(templatesDir);
+    const templates: Record<string, string> = {};
+    for (const file of files) {
+      if (file.endsWith(".md") || file.endsWith(".json")) {
+        templates[file] = fs.readFileSync(path.join(templatesDir, file), "utf-8");
+      }
+    }
+
+    res.json({ success: true, version: "1.0.7", templates });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/speckit/v107/catalogs", (req, res) => {
+  try {
+    const presetsPath = path.join(SPEC_KIT_VENDOR_PATH, "presets", "catalog.json");
+    const presetsCommunityPath = path.join(SPEC_KIT_VENDOR_PATH, "presets", "catalog.community.json");
+    const extensionsPath = path.join(SPEC_KIT_VENDOR_PATH, "extensions", "catalog.json");
+    const extensionsCommunityPath = path.join(SPEC_KIT_VENDOR_PATH, "extensions", "catalog.community.json");
+
+    const catalogs = {
+      version: "1.0.7",
+      presets: fs.existsSync(presetsPath) ? JSON.parse(fs.readFileSync(presetsPath, "utf-8")) : null,
+      presetsCommunity: fs.existsSync(presetsCommunityPath) ? JSON.parse(fs.readFileSync(presetsCommunityPath, "utf-8")) : null,
+      extensions: fs.existsSync(extensionsPath) ? JSON.parse(fs.readFileSync(extensionsPath, "utf-8")) : null,
+      extensionsCommunity: fs.existsSync(extensionsCommunityPath) ? JSON.parse(fs.readFileSync(extensionsCommunityPath, "utf-8")) : null,
+    };
+
+    res.json({ success: true, data: catalogs });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
