@@ -22,6 +22,7 @@ interface OverviewDashboardProps {
   onNavigateTab: (tab: ViewTab) => void;
   onTriggerAiSpecModal: () => void;
   onSelectVersion: (version: string) => void;
+  onOpenFeatureImport?: () => void;
 }
 
 export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
@@ -29,6 +30,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
   onNavigateTab,
   onTriggerAiSpecModal,
   onSelectVersion,
+  onOpenFeatureImport,
 }) => {
   const { spec, plan, tasks, constitution, audit } = project;
 
@@ -43,43 +45,52 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
   return (
     <div className="space-y-6 pb-12">
       {/* Top Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-950/80 via-zinc-900 to-cyan-950/60 border border-indigo-500/20 p-6 md:p-8 shadow-xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-slate-900 border border-slate-700/80 p-6 md:p-8 shadow-xl text-white">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/40">
                 GitHub Spec-Kit Workspace
               </span>
               {project.importedRepo && (
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500/30 text-cyan-200 border border-cyan-400/40 font-mono">
                   Imported: {project.importedRepo.primaryLanguage}
                 </span>
               )}
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-mono">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 font-mono">
                 Spec-Kit v{project.version || '1.0.7'}
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-100 tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
               {project.name}
             </h1>
-            <p className="text-xs md:text-sm text-zinc-300 leading-relaxed">
+            <p className="text-xs md:text-sm text-zinc-200 leading-relaxed">
               {project.description || spec.summary}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {onOpenFeatureImport && (
+              <button
+                onClick={onOpenFeatureImport}
+                className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-md border border-purple-400/30"
+              >
+                <Sparkles className="w-4 h-4 text-purple-200" />
+                <span>Import Feature / User Stories</span>
+              </button>
+            )}
             <button
               onClick={() => onNavigateTab('import')}
-              className="px-4 py-2.5 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2 transition-all"
+              className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-md border border-cyan-400/30"
             >
-              <span>Import / Tech Stack Studio</span>
+              <span>Import Repo Studio</span>
             </button>
             <button
               onClick={onTriggerAiSpecModal}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/20 flex items-center gap-2 transition-all"
+              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-md border border-indigo-400/30"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 text-indigo-200" />
               <span>AI Spec Generator</span>
             </button>
           </div>

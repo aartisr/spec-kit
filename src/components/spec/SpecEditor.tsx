@@ -19,12 +19,14 @@ interface SpecEditorProps {
   spec: FeatureSpec;
   onSaveSpec: (updatedSpec: FeatureSpec) => void;
   onTriggerAiGenerate: () => void;
+  onOpenFeatureImport?: () => void;
 }
 
 export const SpecEditor: React.FC<SpecEditorProps> = ({
   spec,
   onSaveSpec,
   onTriggerAiGenerate,
+  onOpenFeatureImport,
 }) => {
   const [activeView, setActiveView] = useState<'visual' | 'markdown'>('visual');
   const [currentSpec, setCurrentSpec] = useState<FeatureSpec>(spec);
@@ -151,6 +153,16 @@ export const SpecEditor: React.FC<SpecEditorProps> = ({
               <span>spec.md Source</span>
             </button>
           </div>
+
+          {onOpenFeatureImport && (
+            <button
+              onClick={onOpenFeatureImport}
+              className="px-3 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Import Feature / PRD</span>
+            </button>
+          )}
 
           <button
             onClick={onTriggerAiGenerate}

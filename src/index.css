@@ -44,10 +44,10 @@
     --color-zinc-700: #cbd5e1;
     --color-zinc-600: #94a3b8;
     --color-zinc-500: #64748b;
-    --color-zinc-400: #475569;
-    --color-zinc-300: #334155;
-    --color-zinc-200: #1e293b;
-    --color-zinc-100: #0f172a;
+    --color-zinc-400: #334155;
+    --color-zinc-300: #1e293b;
+    --color-zinc-200: #0f172a;
+    --color-zinc-100: #020617;
 
     color-scheme: light;
   }
@@ -76,10 +76,10 @@
     --color-zinc-700: #c2b6a2;
     --color-zinc-600: #948670;
     --color-zinc-500: #78716c;
-    --color-zinc-400: #57534e;
-    --color-zinc-300: #44403c;
-    --color-zinc-200: #292524;
-    --color-zinc-100: #1c1917;
+    --color-zinc-400: #44403c;
+    --color-zinc-300: #292524;
+    --color-zinc-200: #1c1917;
+    --color-zinc-100: #0c0a09;
 
     color-scheme: light;
   }
@@ -91,7 +91,7 @@
   }
 }
 
-/* Specific theme overrides to ensure maximum contrast and distinct visual identities */
+/* Base Theme Overrides */
 [data-theme="nordic-light"] {
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
@@ -102,60 +102,177 @@
   color: #1c1917 !important;
 }
 
-/* Force high-contrast text and border rendering in light themes */
-[data-theme="nordic-light"] .border-zinc-800,
-[data-theme="nordic-light"] .border-zinc-800\/80,
-[data-theme="nordic-light"] .border-zinc-700 {
+/* Universal High Contrast Card, Border & Background Rules for Light Mode */
+:root[data-theme="nordic-light"] .border-zinc-800,
+:root[data-theme="nordic-light"] .border-zinc-800\/80,
+:root[data-theme="nordic-light"] .border-zinc-800\/60,
+:root[data-theme="nordic-light"] .border-zinc-700 {
   border-color: #cbd5e1 !important;
 }
 
-[data-theme="warm-paper"] .border-zinc-800,
-[data-theme="warm-paper"] .border-zinc-800\/80,
-[data-theme="warm-paper"] .border-zinc-700 {
+:root[data-theme="warm-paper"] .border-zinc-800,
+:root[data-theme="warm-paper"] .border-zinc-800\/80,
+:root[data-theme="warm-paper"] .border-zinc-800\/60,
+:root[data-theme="warm-paper"] .border-zinc-700 {
   border-color: #d6cebe !important;
 }
 
-[data-theme="nordic-light"] .bg-zinc-900,
-[data-theme="nordic-light"] .bg-zinc-900\/60,
-[data-theme="nordic-light"] .bg-zinc-900\/80 {
+:root[data-theme="nordic-light"] .bg-zinc-900,
+:root[data-theme="nordic-light"] .bg-zinc-900\/60,
+:root[data-theme="nordic-light"] .bg-zinc-900\/80 {
   background-color: #ffffff !important;
   color: #0f172a !important;
 }
 
-[data-theme="warm-paper"] .bg-zinc-900,
-[data-theme="warm-paper"] .bg-zinc-900\/60,
-[data-theme="warm-paper"] .bg-zinc-900\/80 {
+:root[data-theme="warm-paper"] .bg-zinc-900,
+:root[data-theme="warm-paper"] .bg-zinc-900\/60,
+:root[data-theme="warm-paper"] .bg-zinc-900\/80 {
   background-color: #fffdfa !important;
   color: #1c1917 !important;
 }
 
-[data-theme="nordic-light"] .bg-zinc-950 {
+:root[data-theme="nordic-light"] .bg-zinc-950,
+:root[data-theme="nordic-light"] .bg-zinc-950\/80,
+:root[data-theme="nordic-light"] .bg-zinc-950\/60 {
   background-color: #f1f5f9 !important;
 }
 
-[data-theme="warm-paper"] .bg-zinc-950 {
+:root[data-theme="warm-paper"] .bg-zinc-950,
+:root[data-theme="warm-paper"] .bg-zinc-950\/80,
+:root[data-theme="warm-paper"] .bg-zinc-950\/60 {
   background-color: #eee7d9 !important;
 }
 
-[data-theme="nordic-light"] .text-zinc-100 {
+:root[data-theme="nordic-light"] .text-zinc-100,
+:root[data-theme="nordic-light"] .text-zinc-200 {
   color: #0f172a !important;
 }
 
-[data-theme="warm-paper"] .text-zinc-100 {
+:root[data-theme="warm-paper"] .text-zinc-100,
+:root[data-theme="warm-paper"] .text-zinc-200 {
   color: #1c1917 !important;
 }
 
-[data-theme="nordic-light"] .text-zinc-300,
-[data-theme="nordic-light"] .text-zinc-400 {
+:root[data-theme="nordic-light"] .text-zinc-300 {
+  color: #1e293b !important;
+}
+
+:root[data-theme="warm-paper"] .text-zinc-300 {
+  color: #292524 !important;
+}
+
+:root[data-theme="nordic-light"] .text-zinc-400 {
   color: #334155 !important;
 }
 
-[data-theme="warm-paper"] .text-zinc-300,
-[data-theme="warm-paper"] .text-zinc-400 {
+:root[data-theme="warm-paper"] .text-zinc-400 {
   color: #44403c !important;
 }
 
-/* Theme Utility Classes */
+:root[data-theme="nordic-light"] .text-zinc-500 {
+  color: #64748b !important;
+}
+
+:root[data-theme="warm-paper"] .text-zinc-500 {
+  color: #78716c !important;
+}
+
+/* Light Theme Accent Color Fixes (High Contrast AAA) */
+:root:not(.dark) .text-cyan-300,
+:root:not(.dark) .text-cyan-400 {
+  color: #0e7490 !important;
+}
+
+:root:not(.dark) .text-indigo-300,
+:root:not(.dark) .text-indigo-400 {
+  color: #3730a3 !important;
+}
+
+:root:not(.dark) .text-purple-300,
+:root:not(.dark) .text-purple-400 {
+  color: #6b21a8 !important;
+}
+
+:root:not(.dark) .text-emerald-300,
+:root:not(.dark) .text-emerald-400 {
+  color: #065f46 !important;
+}
+
+:root:not(.dark) .text-amber-300,
+:root:not(.dark) .text-amber-400 {
+  color: #92400e !important;
+}
+
+:root:not(.dark) .text-red-300,
+:root:not(.dark) .text-red-400 {
+  color: #991b1b !important;
+}
+
+/* Light Theme Background Tints for Badges & Buttons */
+:root:not(.dark) .bg-purple-600\/20,
+:root:not(.dark) .bg-purple-500\/10,
+:root:not(.dark) .bg-purple-500\/20 {
+  background-color: #f3e8ff !important;
+  color: #581c87 !important;
+  border-color: #d8b4fe !important;
+}
+
+:root:not(.dark) .bg-cyan-600\/20,
+:root:not(.dark) .bg-cyan-500\/10,
+:root:not(.dark) .bg-cyan-500\/20,
+:root:not(.dark) .bg-cyan-400\/20 {
+  background-color: #cffafe !important;
+  color: #164e63 !important;
+  border-color: #a5f3fc !important;
+}
+
+:root:not(.dark) .bg-indigo-600\/20,
+:root:not(.dark) .bg-indigo-500\/10,
+:root:not(.dark) .bg-indigo-500\/20 {
+  background-color: #e0e7ff !important;
+  color: #1e1b4b !important;
+  border-color: #c7d2fe !important;
+}
+
+:root:not(.dark) .bg-emerald-500\/10,
+:root:not(.dark) .bg-emerald-500\/20 {
+  background-color: #d1fae5 !important;
+  color: #064e3b !important;
+  border-color: #a7f3d0 !important;
+}
+
+:root:not(.dark) .bg-amber-500\/10,
+:root:not(.dark) .bg-amber-500\/20 {
+  background-color: #fef3c7 !important;
+  color: #78350f !important;
+  border-color: #fde68a !important;
+}
+
+:root:not(.dark) .bg-red-500\/10,
+:root:not(.dark) .bg-red-500\/20 {
+  background-color: #fee2e2 !important;
+  color: #7f1d1d !important;
+  border-color: #fca5a5 !important;
+}
+
+/* Inputs in Light Mode */
+:root:not(.dark) input,
+:root:not(.dark) textarea,
+:root:not(.dark) select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+:root[data-theme="warm-paper"] input,
+:root[data-theme="warm-paper"] textarea,
+:root[data-theme="warm-paper"] select {
+  background-color: #fffdfa !important;
+  color: #1c1917 !important;
+  border-color: #d6cebe !important;
+}
+
+/* Utility Classes */
 .theme-canvas {
   background-color: var(--bg-canvas);
   color: var(--text-main);
@@ -178,3 +295,4 @@
 .theme-text-muted {
   color: var(--text-muted);
 }
+

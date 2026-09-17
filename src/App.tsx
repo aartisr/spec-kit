@@ -11,6 +11,7 @@ import { PromptStudio } from './components/prompt/PromptStudio';
 import { AuditDashboard } from './components/audit/AuditDashboard';
 import { CliExporter } from './components/exporter/CliExporter';
 import { RepoImportStudio } from './components/import/RepoImportStudio';
+import { FeatureImportModal } from './components/import/FeatureImportModal';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { AiSpecModal } from './components/common/AiSpecModal';
 import { storageService } from './lib/storage';
@@ -28,6 +29,7 @@ function AppContent() {
   const [isQuickSearchOpen, setIsQuickSearchOpen] = useState<boolean>(false);
   const [isAiSpecModalOpen, setIsAiSpecModalOpen] = useState<boolean>(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState<boolean>(false);
+  const [isFeatureImportModalOpen, setIsFeatureImportModalOpen] = useState<boolean>(false);
 
   // New Project Form
   const [newProjName, setNewProjName] = useState('');
@@ -141,6 +143,55 @@ function AppContent() {
     setActiveTab('overview');
   };
 
+  const handleMergeIntoActiveProject = (importedStories: any[], importedData: any) => {
+    if (!activeProject) return;
+
+    const currentStories = activeProject.spec.userStories || [];
+    const mergedStories = [...currentStories, ...importedStories];
+
+    const currentFrs = activeProject.spec.functionalRequirements || [];
+    const importedFrs = importedData.functionalRequirements || [];
+    const mergedFrs = [...currentFrs, ...importedFrs];
+
+    const updatedSpec = {
+      ...activeProject.spec,
+      userStories: mergedStories,
+      functionalRequirements: mergedFrs,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const currentTasks = activeProject.tasks.tasks || [];
+    const importedTasks = (importedData.tasks || []).map((t: any, idx: number) => ({
+      id: t.id || `TASK-${200 + idx}`,
+      title: t.title || `Task ${idx + 1}`,
+      phase: t.phase || 'Phase 2: Integration',
+      description: t.description || 'Task description',
+      status: 'todo',
+      estimatedHours: t.estimatedHours || 3,
+      mappedRequirementId: t.mappedRequirementId || 'FR-101',
+      dependencies: [],
+      targetAgentPromptSnippet: t.targetAgentPromptSnippet || `Implement ${t.title}`,
+    }));
+
+    const updatedTasks = {
+      ...activeProject.tasks,
+      tasks: [...currentTasks, ...importedTasks],
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const updatedProject = {
+      ...activeProject,
+      spec: updatedSpec,
+      tasks: updatedTasks,
+      updatedAt: new Date().toISOString(),
+    };
+
+    storageService.updateActiveProject(updatedProject);
+    setActiveProject(updatedProject);
+    setProjects(storageService.getProjects());
+    setActiveTab('spec');
+  };
+
   const handleSelectVersion = (version: string) => {
     if (!activeProject) return;
     const updated = { ...activeProject, version, updatedAt: new Date().toISOString() };
@@ -159,6 +210,7 @@ function AppContent() {
         onSelectProject={handleSelectProject}
         onCreateProject={() => setIsNewProjectModalOpen(true)}
         onOpenImportStudio={() => setActiveTab('import')}
+        onOpenFeatureImport={() => setIsFeatureImportModalOpen(true)}
         onOpenQuickSearch={() => setIsQuickSearchOpen(true)}
         isDarkMode={isDark}
         onToggleTheme={() => {}}
@@ -192,6 +244,7 @@ function AppContent() {
                   onNavigateTab={setActiveTab}
                   onTriggerAiSpecModal={() => setIsAiSpecModalOpen(true)}
                   onSelectVersion={handleSelectVersion}
+                  onOpenFeatureImport={() => setIsFeatureImportModalOpen(true)}
                 />
               )}
 
@@ -207,6 +260,7 @@ function AppContent() {
                   spec={activeProject.spec}
                   onSaveSpec={handleSaveSpec}
                   onTriggerAiGenerate={() => setIsAiSpecModalOpen(true)}
+                  onOpenFeatureImport={() => setIsFeatureImportModalOpen(true)}
                 />
               )}
 
@@ -277,6 +331,20 @@ function AppContent() {
         onClose={() => setIsAiSpecModalOpen(false)}
         project={activeProject}
         onApplySpecData={handleApplyAiSpecData}
+      />
+
+      {/* Feature Import & User Stories Generator Modal */}
+      <FeatureImportModal
+        isOpen={isFeatureImportModalOpen}
+        onClose={() => setIsFeatureImportModalOpen(false)}
+        onImportComplete={(newProject) => {
+          storageService.updateActiveProject(newProject);
+          setProjects(storageService.getProjects());
+          setActiveProject(newProject);
+          setActiveTab('spec');
+        }}
+        activeProject={activeProject}
+        onMergeIntoActiveProject={handleMergeIntoActiveProject}
       />
 
       {/* Create New Project Modal */}

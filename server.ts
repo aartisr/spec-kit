@@ -641,6 +641,171 @@ Generate a complete GitHub Spec-Kit specification package tailored specifically 
   }
 });
 
+// Import Feature & Extract User Stories + Spec-Kit Endpoint
+app.post("/api/feature/import", async (req, res) => {
+  try {
+    const { featureContent, featureTitle, sourceType } = req.body;
+    const client = getAiClient();
+
+    const prompt = `You are an expert Lead Product Manager and Software Architect specializing in GitHub Spec-Kit specification-driven development (SDD).
+You have been given raw feature input, a PRD, user story draft, Jira issue description, or feature request.
+
+Feature Source Type: "${sourceType || "text"}"
+${featureTitle ? `Feature Title / Context: "${featureTitle}"\n` : ""}
+Raw Feature Content / PRD Document:
+"""
+${featureContent}
+"""
+
+Analyze this feature input thoroughly. Extract and auto-generate a comprehensive, production-ready Spec-Kit package including:
+1. Title and High-Level Executive Summary
+2. Comprehensive User Stories (minimum 3-6 stories) formatted with:
+   - id (e.g. US-101, US-102)
+   - title
+   - priority ("High", "Medium", "Low")
+   - asA (role/persona e.g., "Developer", "Admin", "End User")
+   - iWantTo (action/capability)
+   - soThat (business value/outcome)
+   - acceptanceCriteria (array of Given/When/Then or verification statements)
+3. Functional Requirements (FR-101, FR-102... with title, description, category: Core/UI/UX/API/Database/Security/Performance/Integration, priority: High/Medium/Low)
+4. Non-Functional Requirements (NFR-101... with title, description)
+5. Recommended Tech Stack Selection (category, technology, justification)
+6. API Contracts (id, method: GET/POST/PUT/DELETE, path, description, payload, response)
+7. Phased Task Breakdown (Phase 1: Setup, Phase 2: Core Infrastructure, Phase 3: Integration, Phase 4: Polish & Testing with id, title, phase, description, estimatedHours, mappedRequirementId, targetAgentPromptSnippet)
+8. Constitution & Governance Rules (id, title, category, description, ruleStatement, strictness: Mandatory/Recommended/Optional)
+9. Mermaid.js architectural flow diagram string.`;
+
+    const response = await client.models.generateContent({
+      model: "gemini-3.8-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            summary: { type: Type.STRING },
+            userStories: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  title: { type: Type.STRING },
+                  priority: { type: Type.STRING },
+                  asA: { type: Type.STRING },
+                  iWantTo: { type: Type.STRING },
+                  soThat: { type: Type.STRING },
+                  acceptanceCriteria: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING },
+                  },
+                },
+              },
+            },
+            functionalRequirements: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  title: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  category: { type: Type.STRING },
+                  priority: { type: Type.STRING },
+                },
+              },
+            },
+            nonFunctionalRequirements: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  title: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                },
+              },
+            },
+            techStack: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  category: { type: Type.STRING },
+                  technology: { type: Type.STRING },
+                  justification: { type: Type.STRING },
+                },
+              },
+            },
+            apiContracts: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  method: { type: Type.STRING },
+                  path: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  payload: { type: Type.STRING },
+                  response: { type: Type.STRING },
+                },
+              },
+            },
+            tasks: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  title: { type: Type.STRING },
+                  phase: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  status: { type: Type.STRING },
+                  estimatedHours: { type: Type.NUMBER },
+                  mappedRequirementId: { type: Type.STRING },
+                  targetAgentPromptSnippet: { type: Type.STRING },
+                },
+              },
+            },
+            constitutionRules: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  title: { type: Type.STRING },
+                  category: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  ruleStatement: { type: Type.STRING },
+                  strictness: { type: Type.STRING },
+                },
+              },
+            },
+            mermaidDiagram: { type: Type.STRING },
+          },
+          required: [
+            "title",
+            "summary",
+            "userStories",
+            "functionalRequirements",
+            "techStack",
+            "tasks",
+            "constitutionRules",
+            "mermaidDiagram",
+          ],
+        },
+      },
+    });
+
+    const data = JSON.parse(response.text || "{}");
+    res.json({ success: true, data });
+  } catch (err: any) {
+    console.error("Error importing feature:", err);
+    res.status(500).json({ success: false, error: err.message || "Failed to import feature and generate Spec-Kit." });
+  }
+});
+
 // Spec-Kit v1.0.7 Native Core Engine API Endpoints
 const SPEC_KIT_VENDOR_PATH = path.join(process.cwd(), "vendor", "spec-kit");
 
